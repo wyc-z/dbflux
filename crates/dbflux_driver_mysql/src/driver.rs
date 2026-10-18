@@ -2032,8 +2032,8 @@ impl Connection for MysqlConnection {
         // MySQL, so it is queried separately: a MariaDB server errors on an
         // unknown system variable, and that error must not sink the whole
         // probe into `Unknown` when `read_only` was read successfully.
-        let read_only = match conn.query_first::<i64, _>("SELECT @@read_only") {
-            Ok(Some(value)) => value != 0,
+        let read_only = match conn.query_first::<String, _>("SELECT @@read_only") {
+            Ok(Some(value)) => &value == "ON",
             _ => return dbflux_core::WritePrivilege::Unknown,
         };
 
